@@ -1,0 +1,9 @@
+## Do not edit in-place 
+## Copy to $HOME and modify there 
+
+## required 
+subscription_id: ""
+tenant_id: ""
+
+##defaults 
+terraform_prefix: "horovod_k8s_pytorch_" 
