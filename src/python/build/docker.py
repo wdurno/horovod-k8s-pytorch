@@ -1,6 +1,6 @@
-from util import run
+from build.util import run
 
-def docker_build(roof, conf): 
+def docker_build(root, conf): 
     '''
     Builds necessary docker images. 
     Works by 
@@ -15,7 +15,7 @@ def docker_build(roof, conf):
     __tear_down_docker_build_env(root, conf) 
     pass 
 
-def __deploy_docker_build_env(root, conf): 
+def __deploy_docker_build_env(root, conf, blocking=True): 
     'deploys build env helm chart'
     ## deploy build 
     name = 'build'
@@ -38,10 +38,13 @@ def __build(root, conf):
     ## setup build environment 
     cmd3 = f'kubectl exec build -- mkdir -p /build' 
     cmd4 = f'kubectl cp {root}/docker build:/build/docker' 
+    run(cmd3) 
+    run(cmd4) 
     ## build 
     image_name = acr_server + '/' + conf['image_name']
     acr_name = conf['terraform_prefix'] + 'acr'
-    cmd5 = f'kubectl exec -it build -- cd /build/docker && docker build -t {image_name} .' 
+    cmd5 = f'kubectl exec -it build -- sh -c "cd /build/docker && docker build -t {image_name} ."' 
+    run(cmd5) 
     ## push 
     cmd6 = f'kubectl exec -it build -- docker login {acr_server} --username {acr_name} --password {acr_token}' 
     cmd7 = f'kubectl exec -it build -- docker push {image_name}' 

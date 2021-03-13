@@ -6,5 +6,5 @@ subscription_id: ""
 tenant_id: ""
 
 ##defaults 
-terraform_prefix: "horovod_k8s_pytorch_"
+terraform_prefix: "horovodK8sPytorch" # alphanumeric characters only 
 image_name: "ai:v0.0.1"
