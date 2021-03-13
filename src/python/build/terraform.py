@@ -26,6 +26,19 @@ def guarantee_phase_2_architecture(root, config):
     __terraform_apply(root, config)
     pass
 
+def terraform_destroy(root, config):
+    'execute `terraform destroy` in in terraform_state/ directory'
+    ## work from terraform_state directory
+    cmd_part_1 = f'cd {root}/terraform_state'
+    ## apply with variables
+    tf_vars = __get_base_var_str(config)
+    cmd_part_2 = 'terraform destroy -auto-approve' + tf_vars
+    ## build command
+    cmd = cmd_part_1 + ' && ' + cmd_part_2
+    ## execute
+    run(cmd, os_system=True)
+    pass
+
 def __copy_phase_1_tf_files(root): 
     'copies phase 1 terraform files from terraform/phase-1/ to terraform_state/' 
     cmd = f'cp {root}/terraform/phase-1/*.tf {root}/terraform_state'
@@ -39,7 +52,7 @@ def __copy_phase_2_tf_files(root):
     pass
 
 def __terraform_apply(root, config): 
-    'execute `terraform apply` to terraform_state directory'
+    'execute `terraform apply` in terraform_state/ directory'
     ## work from terraform_state directory 
     cmd_part_1 = f'cd {root}/terraform_state' 
     ## apply with variables 
@@ -62,9 +75,9 @@ def __get_base_var_str(config):
     ## build str
     base_var_str = f' -var="subscription_id={subscription_id}"'+\
             f' -var="tenant_id={tenant_id}"'+\
-            f' -var="resource_group_name={tf_prefix}_rg"'+\
-            f' -var="acr_name={tf_prefix}_acr"'+\
-            f' -var="k8s_name={tf_prefix}_k8s"'+\
-            f' -var="compute_pool_name={tf_prefix}_k8s_compute_pool"'
+            f' -var="resource_group_name={tf_prefix}rg"'+\
+            f' -var="acr_name={tf_prefix}acr"'+\
+            f' -var="k8s_name={tf_prefix}k8s"'+\
+            f' -var="compute_pool_name={tf_prefix}k8s_compute_pool"'
     return base_var_str
 
