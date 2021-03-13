@@ -13,10 +13,29 @@ def guarantee_phase_1_architecture(root, config):
     __terraform_apply(root, config) 
     pass
 
+def guarantee_phase_2_architecture(root, config): 
+    '''
+    builds or verifies existence of sufficient architecture to run phase 1
+    inputs:
+      - root: repo root path
+      - config: repo configuration object
+    outputs: None
+    side-effects: guarantees phase 1 architecture
+    '''
+    __copy_phase_2_tf_files(root)
+    __terraform_apply(root, config)
+    pass
+
 def __copy_phase_1_tf_files(root): 
-    'copies phase 1 terraform files from terraform/base/ to terraform_state/' 
-    cmd = f'cp {root}/terraform/base/*.tf {root}/terraform_state'
+    'copies phase 1 terraform files from terraform/phase-1/ to terraform_state/' 
+    cmd = f'cp {root}/terraform/phase-1/*.tf {root}/terraform_state'
     run(cmd, os_system=True) 
+    pass
+
+def __copy_phase_2_tf_files(root):
+    'copies phase 2 terraform files from terraform/phase-2/ to terraform_state/'
+    cmd = f'cp {root}/terraform/phase-2/*.tf {root}/terraform_state'
+    run(cmd, os_system=True)
     pass
 
 def __terraform_apply(root, config): 
@@ -45,6 +64,7 @@ def __get_base_var_str(config):
             f' -var="tenant_id={tenant_id}"'+\
             f' -var="resource_group_name={tf_prefix}_rg"'+\
             f' -var="acr_name={tf_prefix}_acr"'+\
-            f' -var="k8s_name={tf_prefix}_k8s"'
+            f' -var="k8s_name={tf_prefix}_k8s"'+\
+            f' -var="compute_pool_name={tf_prefix}_k8s_compute_pool"'
     return base_var_str
 

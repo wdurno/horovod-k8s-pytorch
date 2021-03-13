@@ -13,7 +13,7 @@ NC = '\033[0m'
 BOLD = '\033[1m'
 UNDERLINE = '\033[4m'
 
-def run(cmd: str, stdin: str=None, os_system: bool=False):
+def run(cmd: str, stdin: str=None, os_system: bool=False, return_stdout=True):
     'Execute a string as a blocking, exception-raising system call'
     ## verify assumptions 
     if type(cmd) != str:
@@ -47,5 +47,7 @@ def run(cmd: str, stdin: str=None, os_system: bool=False):
         print(OKCYAN+'STDOUT: '+stdout+NC) 
         print(OKCYAN+'STDERR: '+stderr+NC) 
         raise OSError(exit_code)
+    if return_stdout:
+        return stdout 
     pass
 

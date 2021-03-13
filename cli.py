@@ -17,7 +17,7 @@ args.ROOT = os.getcwd()
 sys.path.append(os.path.join(args.ROOT, 'src', 'python')) 
 
 ## import build libs 
-# TODO 
+from python.build.terraform import guarantee_phase_1_architecture 
 
 ## parse config path 
 if args.config_path is None: 

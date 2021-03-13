@@ -20,28 +20,23 @@ variable "acr_name" {
 
 variable "k8s_name" { 
   type = string
-  default "k8s"
+  default = "k8s"
 } 
 
 ## phase-2 variables 
 
-variable "number_of_ephemeral_nodes" { 
+variable "compute_pool_name" { 
+  type = string 
+  default = "compute" 
+} 
+
+variable "number_of_compute_nodes" { 
   type = number
-  default = 5
+  default = 2
 }
 
-variable "ephemeral_node_type" { 
+variable "compute_node_type" { 
   type = string
   default = "Standard_F2S_v2"
-} 
-
-variable "number_of_storage_nodes" { 
-  type = number 
-  default = 3 
-} 
-
-variable "storage_node_type" {
-  type = string
-  default = "Standard_A2M_v2" 
 } 
 
