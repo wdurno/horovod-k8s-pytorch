@@ -44,12 +44,12 @@ def __build(root, conf):
     image_name = acr_server + '/' + conf['image_name']
     acr_name = conf['terraform_prefix'] + 'acr'
     cmd5 = f'kubectl exec -it build -- sh -c "cd /build/docker && docker build -t {image_name} ."' 
-    run(cmd5) 
+    run(cmd5, os_system=True) 
     ## push 
     cmd6 = f'kubectl exec -it build -- docker login {acr_server} --username {acr_name} --password {acr_token}' 
     cmd7 = f'kubectl exec -it build -- docker push {image_name}' 
     run(cmd6) 
-    run(cmd7) 
+    run(cmd7, os_system=True) 
     pass
 
 def __tear_down_docker_build_env(root, conf): 

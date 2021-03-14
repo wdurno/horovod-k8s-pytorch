@@ -39,6 +39,12 @@ def terraform_destroy(root, config):
     run(cmd, os_system=True)
     pass
 
+def terraform_destroy_compute(root, config):
+    'delete compute, leave ACR standing'
+    __delete_compute_tf_files(root) 
+    __terraform_apply(root, config) 
+    pass 
+
 def __copy_phase_1_tf_files(root): 
     'copies phase 1 terraform files from terraform/phase-1/ to terraform_state/' 
     cmd = f'cp {root}/src//terraform/phase-1/*.tf {root}/terraform_state'
@@ -50,6 +56,15 @@ def __copy_phase_2_tf_files(root):
     cmd = f'cp {root}/src/terraform/phase-2/*.tf {root}/terraform_state'
     run(cmd, os_system=True)
     pass
+
+def __delete_compute_tf_files(root):
+    cmd = f'rm {root}/terraform_state/k8s.tf {root}/terraform_state/compute_pool.tf'
+    try: 
+        run(cmd) 
+    except Exception as e: 
+        ## if already deleted, not a problem 
+        pass 
+    pass 
 
 def __terraform_apply(root, config): 
     'execute `terraform apply` in terraform_state/ directory'
@@ -80,6 +95,6 @@ def __get_base_var_str(config):
             f' -var="resource_group_name={tf_prefix}rg"'+\
             f' -var="acr_name={tf_prefix}acr"'+\
             f' -var="k8s_name={tf_prefix}k8s"'+\
-            f' -var="compute_pool_name={tf_prefix}k8s_compute_pool"'
+            f' -var="compute_pool_name=k8spool"'
     return base_var_str
 
