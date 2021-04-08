@@ -10,6 +10,9 @@ parser.add_argument('--no-docker-build', dest='no_docker_build', action='store_t
 parser.add_argument('--terraform-destroy', dest='terraform_destroy', action='store_true', help='tears-down everything') 
 parser.add_argument('--terraform-destroy-compute', dest='terraform_destroy_compute', action='store_true', \
         help='destroys nodes, retains resource group and acr') 
+parser.add_argument('--skip-terraform', dest='skip_terraform', action='store_true', help='skips all terraform build actions') 
+parser.add_argument('--interactive-debugging-mode', dest='interactive_debugging_mode', action='store_true', \
+        help='sleeps horovod pods for easier debugging')
 args = parser.parse_args() 
 
 ## constants 
@@ -24,6 +27,7 @@ from build.terraform import guarantee_phase_1_architecture, guarantee_phase_2_ar
         terraform_destroy_compute
 from build.secret import refresh_keys 
 from build.docker import docker_build 
+from build.horovod import deploy_horovod 
 
 ## parse config path 
 if args.config_path is None: 
@@ -34,6 +38,7 @@ if args.config_path is None:
 ## load config 
 with open(config_path, 'r') as f: 
     args.config = yaml.safe_load(f) 
+    args.config['interactive_debugging_mode'] = args.interactive_debugging_mode 
     pass
 
 if args.terraform_destroy_compute:
@@ -46,10 +51,22 @@ if args.terraform_destroy:
     exit(0) 
     pass
 
-## use build libs 
-guarantee_phase_1_architecture(args.ROOT, args.config) 
+if not args.skip_terraform:
+    ## deploy build-essential infrastructure 
+    guarantee_phase_1_architecture(args.ROOT, args.config) 
+    pass
+
+## always refresh keys because tokens expire 
 refresh_keys(args.ROOT, args.config) 
+
 if not args.no_docker_build: 
+    ## build horovod image 
     docker_build(args.ROOT, args.config) 
     pass
-guarantee_phase_2_architecture(args.ROOT, args.config) 
+
+if not args.skip_terraform:
+    ## deploy horovod compute infrastructure 
+    guarantee_phase_2_architecture(args.ROOT, args.config) 
+    pass 
+
+deploy_horovod(args.ROOT, args.config)

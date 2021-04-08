@@ -1,4 +1,5 @@
 from build.util import run
+from time import sleep 
 
 def docker_build(root, conf): 
     '''
@@ -26,6 +27,8 @@ def __deploy_docker_build_env(root, conf, blocking=True):
         ## wait until deployed 
         cmd2 = f'kubectl wait --for=condition=ready pod -l name={name}'
         run(cmd2) 
+        ## docker daemon needs a little more time 
+        sleep(3) 
     pass 
 
 def __build(root, conf): 
@@ -37,7 +40,7 @@ def __build(root, conf):
     acr_token = run(cmd2, return_stdout=True) 
     ## setup build environment 
     cmd3 = f'kubectl exec build -- mkdir -p /build' 
-    cmd4 = f'kubectl cp {root}/docker build:/build/docker' 
+    cmd4 = f'kubectl cp {root}/docker build:/build/docker && kubectl cp {root}/src build:/build/docker/src' 
     run(cmd3) 
     run(cmd4) 
     ## build 

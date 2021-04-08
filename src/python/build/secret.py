@@ -25,7 +25,6 @@ def __get_acr_token(root, config):
     json_str = run(cmd, return_stdout=True) 
     ## parse JSON and save token 
     j = json.loads(json_str)
-    print('DEBUG '+str(j))
     token = j['passwords'][0]['value']  
     token_path = os.path.join(root, 'secret', 'acr', 'token') 
     with open(token_path, 'w') as f:
@@ -57,7 +56,7 @@ def __upload_acr_secret_to_k8s(root):
         pass
     cmd2 = 'kubectl create secret docker-registry acr-creds '+\
         f'--docker-server=$(cat {root}/secret/acr/server) '+\
-        '--docker-username=RlHypothesis2AzureContainerRegsitry1 '+\
+        '--docker-username=horovodK8sPytorchacr '+\
         f'--docker-password=$(cat {root}/secret/acr/token)'
     run(cmd2) 
     pass
