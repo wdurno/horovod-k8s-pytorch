@@ -7,6 +7,8 @@ import argparse
 parser = argparse.ArgumentParser(description='Distributed Pytorch fitting with Horovod on Kubernetes.') 
 parser.add_argument('--config-path', dest='config_path', type=str, default=None, help='path to config file') 
 parser.add_argument('--no-docker-build', dest='no_docker_build', action='store_true', help='skip docker build step') 
+parser.add_argument('--keep-docker-build-env', dest='keep_docker_build_env', action='store_true', default=False, \
+        help='do not tear-down DinD after build, thereby retaining cached layers') 
 parser.add_argument('--terraform-destroy', dest='terraform_destroy', action='store_true', help='tears-down everything') 
 parser.add_argument('--terraform-destroy-compute', dest='terraform_destroy_compute', action='store_true', \
         help='destroys nodes, retains resource group and acr') 
@@ -61,7 +63,7 @@ refresh_keys(args.ROOT, args.config)
 
 if not args.no_docker_build: 
     ## build horovod image 
-    docker_build(args.ROOT, args.config) 
+    docker_build(args.ROOT, args.config, args.keep_docker_build_env) 
     pass
 
 if not args.skip_terraform:

@@ -1,7 +1,7 @@
 from build.util import run
 from time import sleep 
 
-def docker_build(root, conf): 
+def docker_build(root, conf, keep_docker_build_env=False): 
     '''
     Builds necessary docker images. 
     Works by 
@@ -13,7 +13,9 @@ def docker_build(root, conf):
     '''
     __deploy_docker_build_env(root, conf) 
     __build(root, conf) 
-    __tear_down_docker_build_env(root, conf) 
+    if not keep_docker_build_env:
+        __tear_down_docker_build_env(root, conf) 
+        pass
     pass 
 
 def __deploy_docker_build_env(root, conf, blocking=True): 

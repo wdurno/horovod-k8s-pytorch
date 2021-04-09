@@ -32,12 +32,18 @@ spec:
       containers:
       - name: horovod
         image: "{{ .Values.image }}"
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
         ports:
         - containerPort: 22
         imagePullPolicy: Always
         command:
           - "python3"
           - "-u"
+          #- "/app/src/python/debug.py" 
           - "/app/src/python/init.py"
           - "--replicas={{ .Values.replicas }}"
           - "--interactive-debugging-mode={{ .Values.interactive_debugging_mode }}"

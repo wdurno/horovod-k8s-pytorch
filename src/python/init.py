@@ -1,4 +1,4 @@
-import argparsei
+import argparse
 import os
 from time import sleep
 
@@ -13,17 +13,6 @@ else:
     args.interactive_debugging_mode = False
     pass
 
-## write ssh host aliases 
-## without this, ssh cannot resolve full host names 
-write_ssh_aliases(args.replicas)
-
-## starting sshd 
-os.system('service ssh start') 
-
-if args.interactive_debugging_mode: 
-    interactive_debugging_mode() 
-    pass 
-
 def interactive_debugging_mode():
     print('starting in interactive debugging mode...')
     while True:
@@ -35,7 +24,7 @@ def interactive_debugging_mode():
 def write_ssh_aliases(n_replicas):
     'writes ~/.ssh/config'
     ssh_config_str = __get_ssh_config_str(n_replicas) 
-    with open('/app/root/.ssh/confg', 'w') as f:
+    with open('/root/.ssh/config', 'w') as f:
         f.write(ssh_config_str) 
     pass
 
@@ -54,4 +43,20 @@ Host horovod-{idx}
 
 '''
 
-
+if __name__ == '__main__':
+    ## write ssh host aliases
+    ## without this, ssh cannot resolve full host names
+    write_ssh_aliases(args.replicas)
+    
+    ## starting sshd
+    os.system('service ssh start')
+    
+    if args.interactive_debugging_mode:
+        interactive_debugging_mode()
+        pass
+    
+    ## check for master 
+    pod_name = os.environ.get('POD_NAME') 
+    print(f'POD_NAME: {pod_name}') 
+    interactive_debugging_mode() 
+    pass 
