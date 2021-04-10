@@ -79,4 +79,6 @@ RUN cat /etc/ssh/ssh_config | grep -v StrictHostKeyChecking > /etc/ssh/ssh_confi
 # Get example python scripts
 ADD src /app/src
 
+RUN pip3 install -r /app/src/python/requirements.txt
+
 WORKDIR "/app"
